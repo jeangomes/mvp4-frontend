@@ -1,6 +1,9 @@
 <template>
   <div>
     <div class="text-h4 doc-h2">Ativos Financeiros</div>
+    <div class="q-mb-md">
+      <financial-asset-form @reloadData="onRequest"/>
+    </div>
     <div class="row q-gutter-sm">
       <div class="col-5" v-for="(row, number) in rows" :key="number">
         <q-card class="my-card q-mb-sm" flat bordered>
@@ -10,6 +13,7 @@
               :title="number"
               ref="tableRef"
               separator="cell"
+              :rows-per-page-options="[0]"
               hide-pagination
               :rows="row"
               :columns="columns"
@@ -24,6 +28,7 @@
 <script setup>
 import { getFinancialAssetsWithoutPagination } from 'src/services-http/requests'
 import { ref, onMounted } from 'vue'
+import FinancialAssetForm from 'components/FinancialAssetForm.vue'
 
 const columns = [
   {
@@ -45,6 +50,13 @@ const columns = [
     field: 'asset_type',
     required: true,
     label: 'Tipo',
+    align: 'left'
+  },
+  {
+    name: 'stock_type',
+    field: 'stock_type',
+    required: true,
+    label: 'Tipo2',
     align: 'left'
   },
   {
@@ -71,17 +83,12 @@ const loading = ref(false)
 function onRequest () {
   getFinancialAssetsWithoutPagination()
     .then(({ data }) => {
-      // pagination.value.rowsNumber = data.meta.total
       rows.value = data
-      // pagination.value.page = page
-      // pagination.value.rowsPerPage = data.meta.per_page
       loading.value = false
     })
 }
 
 onMounted(() => {
-  // get initial data from server (1st page)
-  // tableRef.value.requestServerInteraction()
   onRequest()
 })
 </script>
