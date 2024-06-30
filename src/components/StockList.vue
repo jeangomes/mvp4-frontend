@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { myRequest, deleteRecord, myRequestOneRecord } from 'src/services-http/requests'
+import { myRequest } from 'src/services-http/requests'
+import { dateFormat, currencyFormat } from '../services-http/util'
 
 const codeSearch = ref('')
 const operations = ref([])
@@ -9,39 +10,11 @@ const callRequest = () => {
   loadingData.value = true
   myRequest(codeSearch.value)
     .then(function (response) {
-      operations.value = response
+      operations.value = response.data
     })
     .finally(function () {
       loadingData.value = false
     })
-}
-
-const deleteMyData = (id) => {
-  if (window.confirm('Você realmente deseja excluir esse registro?')) {
-    loadingData.value = true
-    deleteRecord(id).then(() => callRequest())
-  }
-}
-const getRecordForEdit = (id) => {
-  loadingData.value = true
-  myRequestOneRecord(id)
-    .then(response => {
-      // myState.value = response
-    })
-    .finally(function () {
-      loadingData.value = false
-    })
-}
-const currencyFormat = (value) => {
-  if (typeof value !== 'number') {
-    return value
-  }
-  const formatter = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2
-  })
-  return formatter.format(value)
 }
 onMounted(() => {
   callRequest()
@@ -71,7 +44,11 @@ onMounted(() => {
       <th>Cotação</th>
       <th>Data Operação</th>
       <th>Valor Negociado</th>
-      <th>Ações</th>
+      <th>Taxas</th>
+      <th>Total Negociado</th>
+      <th>Quantidade Total</th>
+      <th>Preço Médio</th>
+      <th>Custo Médio</th>
     </tr>
     </thead>
     <tbody>
@@ -80,12 +57,13 @@ onMounted(() => {
       <td>{{ operation.code }}</td>
       <td>{{ operation.quantity }}</td>
       <td>{{ currencyFormat(operation.price) }}</td>
-      <td>{{ operation.operation_date }}</td>
+      <td>{{ dateFormat(operation.negotiation_note.data_pregao) }}</td>
       <td>{{ currencyFormat(operation.operation_amount) }}</td>
-      <td>
-        <button type="button" @click="deleteMyData(operation.id)">Excluir</button>
-        <button class="btn-edit" type="button" @click="getRecordForEdit(operation.id)">Editar</button>
-      </td>
+      <td>{{ currencyFormat(operation.taxas) }}</td>
+      <td>{{ currencyFormat(operation.total_negociado) }}</td>
+      <td>{{operation.qtd_total}}</td>
+      <td>?</td>
+      <td>?</td>
     </tr>
     </tbody>
   </q-markup-table>

@@ -2,7 +2,7 @@
   <div>
     <div class="text-h4 doc-h2">Cadastrar nota e operações</div>
     <div class="q-mb-md">
-      <negotiation-note-form @reloadData="onRequest"/>
+      <negotiation-note-form @reloadData="onRequest" :assets="assets"/>
     </div>
     <q-card class="my-card q-mb-sm" flat bordered>
       <q-card-section>
@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { getNegotiationNotes } from 'src/services-http/requests'
+import { getAssetsListForCombo, getNegotiationNotes } from 'src/services-http/requests'
 import { ref, onMounted } from 'vue'
 import NegotiationNoteForm from 'components/NegotiationNoteForm.vue'
 import { currencyFormat, dateFormat } from 'src/services-http/util'
@@ -184,6 +184,7 @@ const columns2 = [
 
 const tableRef = ref()
 const rows = ref([])
+const assets = ref([])
 const loading = ref(false)
 
 function onRequest () {
@@ -196,6 +197,14 @@ function onRequest () {
 
 onMounted(() => {
   onRequest()
+  getAssetsListForCombo().then(function (response) {
+    assets.value = response.data.map(function (elem) {
+      const elem2 = {}
+      elem2.label = elem
+      elem2.value = elem
+      return elem2
+    })
+  })
 })
 </script>
 

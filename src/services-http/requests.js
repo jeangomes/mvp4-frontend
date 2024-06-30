@@ -5,16 +5,8 @@ export const myRequest = (codeFilter) => {
   if (codeFilter !== '') {
     url = 'http://localhost:5000/operations?code=' + codeFilter
   }
-  return fetch(url)
-    .then(data => {
-      return data.json()
-    })
-    .then(myData => {
-      return myData.operations
-    })
-    .catch(function (error) {
-      console.log(error.message)
-    })
+  console.log(url)
+  return api.get('/operations')
 }
 
 export const myRequestOneRecord = (id) => {
@@ -92,4 +84,20 @@ export const getFinancialAssets = (pagination) => {
 
 export const getFinancialAssetsWithoutPagination = () => {
   return api.get('/financial-assets')
+}
+
+export const postNewFinancialAssets = (payload) => {
+  return api.post('/financial-assets', payload)
+}
+
+export const postNewNegotiationNote = (payload) => {
+  return api.post('/negotiation-notes', payload)
+}
+
+export const getNegotiationNotes = () => {
+  return api.get('/negotiation-notes')
+}
+
+export const getAssetsListForCombo = () => {
+  return api.get('/assets-list')
 }

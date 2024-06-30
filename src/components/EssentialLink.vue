@@ -1,5 +1,6 @@
 <template>
   <q-item
+    exact
     :to="props.link"
   >
     <q-item-section

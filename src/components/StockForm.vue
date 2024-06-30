@@ -1,81 +1,63 @@
 <script setup>
-import { ref } from 'vue'
-import { myRequest, postMyData, updateMyData } from 'src/services-http/requests'
-
-const loadingData = ref(false)
-const myState = ref({
-  id: '',
-  operation_type: '',
-  quantity: '',
-  price: '',
-  operation_date: '',
-  code: ''
-})
-const codeSearch = ref('')
-const operations = ref([])
-const callRequest = () => {
-  loadingData.value = true
-  myRequest(codeSearch.value)
-    .then(function (response) {
-      operations.value = response
+import { ref, inject, onMounted } from 'vue'
+const props = defineProps(['assets'])
+const { form } = inject('form')
+const options = ref([])
+function filterManufacturer (val, update) {
+  if (val === '') {
+    update(() => {
+      options.value = props.assets
     })
-    .finally(function () {
-      loadingData.value = false
-    })
-}
-const saveMyData = () => {
-  loadingData.value = true
-  if (!myState.value.id) {
-    postMyData(myState.value).then(() => callRequest())
-  } else {
-    updateMyData(myState.value).then(() => callRequest())
+    return
   }
-  // resetForm()
+  update(() => {
+    const needle = val.toLowerCase()
+    options.value = props.assets.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+  })
 }
+onMounted(() => {
+  options.value = props.assets
+})
 </script>
 
 <template>
-  <div class="text-h5" style="border-bottom: 1px solid #f0f5;">Gestão de compra de ativos financeiros</div>
-  <q-card class="my-form q-my-sm" bordered>
+  <q-card class="my-form" bordered>
     <q-card-section>
-      <div class="text-subtitle1">Cadastrar nova operação</div>
-      <q-form
-        @submit="saveMyData"
-      >
-        <div class="row q-col-gutter-xs">
-          <div class="col-xs-12 col-sm-6 col-md-2">
-            <q-select v-model="myState.operation_type" :options="['Compra', 'Venda']" label="Operação" outlined stack-label />
-          </div>
-          <div class="col-xs-12 col-sm-6 col-md-2">
-            <q-input
-              outlined stack-label
-              v-model="myState.code"
-              label="Código *"
-              lazy-rules
-              :rules="[ val => val && val.length > 0 || 'Please type something']"
-            />
-          </div>
-          <div class="col-xs-12 col-sm-6 col-md-2">
-            <q-input
-              type="number"
-              outlined stack-label
-              v-model="myState.quantity"
-              label="Quantidade *"
-              lazy-rules
-              :rules="[ val => val && val.length > 0 || 'Please type something']"
-            />
-          </div>
-          <div class="col-xs-12 col-sm-6 col-md-2">
-            <q-input type="number" v-model="myState.price" label="Cotação" step="0.01" stack-label outlined/>
-          </div>
-          <div class="col-xs-12 col-sm-6 col-md-2">
-            <q-input outlined stack-label type="date" v-model="myState.operation_date" label="Data Operação"/>
-          </div>
-          <div class="col-xs-12 col-sm-6 col-md-2">
-            <q-btn type="submit" label="Salvar" class="q-mt-sm q-ml-md" color="primary" no-caps/>
-          </div>
+      <pre v-if="false">{{form.operations}}</pre>
+      <div class="row q-col-gutter-xs" v-for="(operation, index) in form.operations" :key="index">
+        <div class="col-xs-12 col-sm-6 col-md-2">
+          <q-select v-model="operation.operation_type" :options="['Compra', 'Venda']" label="Operação" outlined stack-label />
         </div>
-      </q-form>
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <q-input
+            v-if="false"
+            outlined stack-label
+            v-model="operation.code"
+            label="Código *"
+            lazy-rules
+            :rules="[ val => val && val.length > 0 || 'Please type something']"
+          />
+          <q-select outlined stack-label emit-value map-options v-model="operation.code"
+                    use-input input-debounce="0" @filter="filterManufacturer"
+                    :rules="[val => !!val || 'Informação obrigatória']" :options="options" label="Código *" />
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2">
+          <q-input
+            type="number"
+            outlined stack-label
+            v-model="operation.quantity"
+            label="Quantidade *"
+            lazy-rules
+            :rules="[ val => val && val.length > 0 || 'Please type something']"
+          />
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2">
+          <q-input type="number" v-model="operation.price" label="Cotação" step="0.01" stack-label outlined :rules="[ val => val && val.length > 0 || 'Campo requerido']"/>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2">
+          <q-btn icon="remove_circle" class="q-mt-sm q-ml-md" color="warning" rounded outline/>
+        </div>
+      </div>
     </q-card-section>
   </q-card>
 </template>

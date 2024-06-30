@@ -3,8 +3,9 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: '/list-ativos', name: 'listAssets', component: () => import('pages/ListAssetsPage.vue') }
+      { path: '', name: 'home', component: () => import('pages/IndexPage.vue') },
+      { path: '/list-ativos', name: 'listAssets', component: () => import('pages/ListAssetsPage.vue') },
+      { path: '/new-operations', name: 'newNoteAndOperations', component: () => import('pages/NewNoteAndOperationsPage.vue') }
     ]
   },
 

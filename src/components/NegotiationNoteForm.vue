@@ -1,11 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, provide } from 'vue'
 import { useQuasar } from 'quasar'
 import { postNewNegotiationNote } from 'src/services-http/requests'
 // import QCurrencyInput from 'components/QCurrencyInput.vue'
 import LcrCurrencyInput from 'components/LcrCurrencyInput.vue'
 import { currencyFormat } from 'src/services-http/util'
+import StockForm from 'components/StockForm.vue'
 
+defineProps(['assets'])
 const $q = useQuasar()
 const emit = defineEmits(['reloadData'])
 const myForm = ref(null)
@@ -18,10 +20,28 @@ const initialFormState = {
   corretagem: 0,
   liquido: 0,
   total: 0,
-  corretora: ''
+  corretora: '',
+  operations: [
+    {
+      operation_type: '',
+      code: '',
+      quantity: 0,
+      price: 0
+    }
+  ]
 }
 
 const form = ref({ ...initialFormState })
+
+const addOperation = () => {
+  console.log('pai')
+  form.value.operations.push({
+    operation_type: '',
+    code: '',
+    quantity: 0,
+    price: 0
+  })
+}
 
 const submitForm = async () => {
   try {
@@ -44,6 +64,10 @@ const submitForm = async () => {
 const resetForm = () => {
   Object.assign(form.value, initialFormState)
 }
+
+provide('form', {
+  form
+})
 </script>
 
 <template>
@@ -87,8 +111,21 @@ const resetForm = () => {
         </div>
       </div>
       <pre v-if="false">{{form}}</pre>
-
-      <q-btn type="submit" label="Salvar" color="primary" class="q-mt-md"/>
+      <div class="row q-mt-sm">
+        <div class="col" style="border-bottom: 1px solid #f0f5;">
+          <span class="text-h6">Inclusão das operações</span>
+          <span class="q-mb-xs float-right">
+            <q-btn @click="addOperation" color="primary" icon="add_circle"/>
+          </span>
+        </div>
+<!--        <div class="q-mb-sm text-right col">
+          <q-btn @click="addOperation" label="Add nova operação" color="primary" no-caps/>
+        </div>-->
+      </div>
+      <stock-form class="q-mt-sm" :assets="assets" />
+      <div class="text-center">
+        <q-btn type="submit" label="Salvar" color="primary" class="q-mt-md"/>
+      </div>
     </q-form>
   </q-card>
 </template>

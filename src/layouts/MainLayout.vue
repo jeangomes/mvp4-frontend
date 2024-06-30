@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          MVP - 4 | Frontend App - Gestão de compra de ativos financeiros
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
@@ -56,6 +56,18 @@ defineOptions({
 })
 
 const linksList = [
+  {
+    title: 'Listagem de Operações',
+    caption: 'Ações, FIIs...',
+    icon: 'list',
+    link: { name: 'home' }
+  },
+  {
+    title: 'Cadastrar operações',
+    caption: 'Compras de Ações, FIIs...',
+    icon: 'list',
+    link: { name: 'newNoteAndOperations' }
+  },
   {
     title: 'Listagem de Ativos',
     caption: 'Ações, FIIs...',
