@@ -4,7 +4,7 @@ import { useQuasar } from 'quasar'
 import { postNewNegotiationNote } from 'src/services-http/requests'
 // import QCurrencyInput from 'components/QCurrencyInput.vue'
 import LcrCurrencyInput from 'components/LcrCurrencyInput.vue'
-import { currencyFormat } from 'src/services-http/util'
+import { currencyFormat } from 'src/util'
 import StockForm from 'components/StockForm.vue'
 
 defineProps(['assets'])

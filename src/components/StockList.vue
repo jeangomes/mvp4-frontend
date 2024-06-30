@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { myRequest } from 'src/services-http/requests'
-import { dateFormat, currencyFormat } from '../services-http/util'
+import { dateFormat, currencyFormat } from 'src/util'
 
 const codeSearch = ref('')
 const operations = ref([])

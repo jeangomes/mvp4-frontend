@@ -65,7 +65,7 @@
 import { getAssetsListForCombo, getNegotiationNotes } from 'src/services-http/requests'
 import { ref, onMounted } from 'vue'
 import NegotiationNoteForm from 'components/NegotiationNoteForm.vue'
-import { currencyFormat, dateFormat } from 'src/services-http/util'
+import { currencyFormat, dateFormat } from 'src/util'
 
 const columns = [
   {
