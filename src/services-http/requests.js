@@ -101,3 +101,7 @@ export const getNegotiationNotes = () => {
 export const getAssetsListForCombo = () => {
   return api.get('/assets-list')
 }
+
+export const getCurrentPosition = () => {
+  return api.get('/current-position')
+}
