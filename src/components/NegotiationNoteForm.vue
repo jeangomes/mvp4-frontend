@@ -6,6 +6,7 @@ import { postNewNegotiationNote } from 'src/services-http/requests'
 import LcrCurrencyInput from 'components/LcrCurrencyInput.vue'
 import { currencyFormat } from 'src/util'
 import StockForm from 'components/StockForm.vue'
+import MyInputDate from 'components/MyInputDate.vue'
 
 defineProps(['assets'])
 const $q = useQuasar()
@@ -25,8 +26,9 @@ const initialFormState = {
     {
       operation_type: '',
       code: '',
-      quantity: 0,
-      price: 0
+      quantity: '',
+      price: 0,
+      asset_type: ''
     }
   ]
 }
@@ -34,11 +36,10 @@ const initialFormState = {
 const form = ref({ ...initialFormState })
 
 const addOperation = () => {
-  console.log('pai')
   form.value.operations.push({
     operation_type: '',
     code: '',
-    quantity: 0,
+    quantity: '',
     price: 0
   })
 }
@@ -63,6 +64,15 @@ const submitForm = async () => {
 
 const resetForm = () => {
   Object.assign(form.value, initialFormState)
+  form.value.operations = [
+    {
+      operation_type: '',
+      code: '',
+      quantity: '',
+      price: 0,
+      asset_type: ''
+    }
+  ]
 }
 
 provide('form', {
@@ -76,15 +86,15 @@ provide('form', {
     <q-form ref="myForm" @submit="submitForm" @reset="resetForm">
       <div class="row q-col-gutter-sm">
         <div class="col-xs-12 col-sm-6 col-md-4">
-          <q-input stack-label outlined v-model="form.data_pregao" type="date" label="Data Pregão" :rules="[ val => val && val.length > 0 || 'Campo requerido']"/>
+          <q-input stack-label outlined v-model="form.corretora" label="Corretora" :rules="[ val => val && val.length > 0 || 'Campo requerido']"/>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-4">
-          <q-input stack-label outlined v-model="form.corretora" label="Corretora" :rules="[ val => val && val.length > 0 || 'Campo requerido']"/>
+          <my-input-date stack-label outlined v-model="form.data_pregao" label="Data Pregão" :rules="[ val => val && val.length > 0 || 'Campo requerido']"/>
         </div>
       </div>
       <div class="row q-col-gutter-sm">
         <div class="col-xs-12 col-sm-6 col-md-2">
-          <LcrCurrencyInput label="Valor Líquido" hint="das Operações" v-model.number="form.valor_liquido" :rules="[val => !!val || 'Campo requerido']" />
+          <LcrCurrencyInput label="Valor Líquido" hint="das Operações" v-model.number="form.valor_liquido" :rules="[ val => val && val.length > 0 || 'Campo requerido']" />
         </div>
         <div class="col-xs-12 col-sm-6 col-md-2">
           <LcrCurrencyInput label="Taxa liquidação" v-model.number="form.taxa_liquidacao" :rules="[val => !!val || 'Campo requerido']" />

@@ -199,9 +199,11 @@ onMounted(() => {
   onRequest()
   getAssetsListForCombo().then(function (response) {
     assets.value = response.data.map(function (elem) {
+      // console.log(elem)
       const elem2 = {}
-      elem2.label = elem
-      elem2.value = elem
+      elem2.label = elem.code
+      elem2.value = elem.code
+      elem2.asset_type = elem.asset_type
       return elem2
     })
   })
