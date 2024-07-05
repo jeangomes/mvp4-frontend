@@ -27,13 +27,21 @@ onMounted(() => {
       <div id="loading"></div>
     </div>
   </Transition>
-  <div id="search_area">
-    <label for="code_search">Filtrar por código</label>
-    <input type="text" v-model="codeSearch" name="code" id="code_search" required>
-    <button type="button" class="btn-search" @click="callRequest()">Pesquisar</button>
+  <q-card id="search_area">
+    <q-card-section>
+      <q-input outlined stack-label v-model="codeSearch" label="Filtrar por código" style="max-width: 200px;">
+        <template v-slot:append>
+          <q-icon v-if="codeSearch !== ''" name="close" @click="codeSearch = ''" class="cursor-pointer" />
+        </template>
 
-    <p style="color: #453731; margin-top: 15px;">Registros encontrados: {{operations.length}}</p>
-  </div>
+        <template v-slot:after>
+          <q-btn round dense icon="search" @click="callRequest()" />
+        </template>
+      </q-input>
+
+      <p style="color: #453731; margin-top: 15px;">Registros encontrados: {{operations.length}}</p>
+    </q-card-section>
+  </q-card>
   <br>
   <q-markup-table separator="cell" bordered dense>
     <thead>
@@ -47,8 +55,6 @@ onMounted(() => {
       <th>Taxas</th>
       <th>Total Negociado</th>
       <th>Quantidade Total</th>
-      <th>Preço Médio</th>
-      <th>Custo Médio</th>
     </tr>
     </thead>
     <tbody>
@@ -62,8 +68,6 @@ onMounted(() => {
       <td>{{ currencyFormat(operation.taxas) }}</td>
       <td>{{ currencyFormat(operation.total_negociado) }}</td>
       <td>{{operation.qtd_total}}</td>
-      <td>?</td>
-      <td>?</td>
     </tr>
     </tbody>
   </q-markup-table>

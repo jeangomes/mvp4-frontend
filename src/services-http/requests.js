@@ -1,12 +1,12 @@
 import { api } from 'boot/axios'
 
 export const myRequest = (codeFilter) => {
-  let url = 'http://localhost:5000/operations'
+  let url = '/operations'
   if (codeFilter !== '') {
-    url = 'http://localhost:5000/operations?code=' + codeFilter
+    url = '/operations?code=' + codeFilter
   }
   console.log(url)
-  return api.get('/operations')
+  return api.get(url)
 }
 
 export const myRequestOneRecord = (id) => {
