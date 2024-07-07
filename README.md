@@ -8,7 +8,10 @@ A aplicação permite que o usuário cadastre operações que realiza no mercado
 Mas inicialmente possui suporte somente a gestão de compra e venda de ações e fundos imobiliários.
 É possível toda uma gestão das operações, bem como a consolidação e
 apuração da posição total, mostrando por ativo se está tendo lucro ou prejuízo.
-No backend é consultado uma api para obter a cotação das ações e fundos imobiliários.
+
+No [backend](https://github.com/jeangomes/mvp4-laravel-docker) é consultado uma [api](https://brapi.dev/)
+para obter a cotação atual das ações e fundos imobiliários.
+Para o próposito inicial a quantidade de requisições do plano gratuito atende, mas é necessário um token configurado no backend.
 
 Este repositório é uma evolução desse [aqui](https://github.com/jeangomes/eng-soft-mvp1-front).
 
