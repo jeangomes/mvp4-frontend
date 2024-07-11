@@ -10,7 +10,7 @@
 
 const { configure } = require('quasar/wrappers')
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -58,7 +58,11 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        API: ctx.dev
+          ? 'http://localhost:8000'
+          : ''
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -80,12 +84,6 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       port: 8082,
-      proxy: {
-        '/api': {
-          target: 'http://192.168.0.151:8000',
-          pathRewrite: { '^/api': 'api' }
-        }
-      },
       // https: true
       open: false // opens browser window automatically
     },
@@ -107,7 +105,8 @@ module.exports = configure(function (/* ctx */) {
       // Quasar plugins
       plugins: [
         'Notify',
-        'Loading'
+        'Loading',
+        'Dialog'
       ]
     },
 
