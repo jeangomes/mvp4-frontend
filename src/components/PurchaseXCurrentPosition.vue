@@ -15,7 +15,7 @@ defineProps({
       <q-markup-table separator="cell" bordered dense>
         <thead>
         <tr>
-          <th colspan="5" class="bg-grey-2">
+          <th colspan="6" class="bg-grey-2">
             <div class="text-subtitle1 text-center q-mb-sm">Posição Atual</div>
           </th>
           <th class="bg-grey-2"></th>
@@ -24,6 +24,7 @@ defineProps({
           </th>
         </tr>
         <tr>
+          <th>#</th>
           <th>Empresa</th>
           <th>Código</th>
           <th>Cotação <br> Atual</th>
@@ -40,7 +41,8 @@ defineProps({
         </tr>
         </thead>
         <tbody>
-        <tr v-for="operation  in operations" :key="operation.id">
+        <tr v-for="(operation, index)  in operations" :key="operation.id">
+          <td>{{index + 1}}</td>
           <td>{{operation.name}}</td>
           <td>{{operation.code}}</td>
           <td>{{currencyFormat(operation.price)}}</td>
