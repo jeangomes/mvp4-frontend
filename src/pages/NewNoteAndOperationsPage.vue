@@ -2,7 +2,12 @@
   <div>
     <div class="text-h4 doc-h2">Cadastrar nota e operações</div>
     <div class="q-mb-md">
-      <negotiation-note-form @reloadData="onRequest" :assets="assets"/>
+      <negotiation-note-form
+        @reloadData="onRequest"
+        :assets="assets"
+        :editEnable="enableEdit"
+        :note-id="noteId"
+        @cancel-edit="cancelEdit"/>
     </div>
     <q-card class="my-card q-mb-sm" flat bordered>
       <q-card-section>
@@ -10,13 +15,12 @@
           ref="tableRef"
           separator="cell"
           :rows-per-page-options="[0]"
-          hide-pagination
           :rows="rows"
           :columns="columns"
           row-key="id">
           <template v-slot:header="props">
             <q-tr :props="props">
-              <q-th auto-width />
+              <q-th auto-width/>
               <q-th
                 v-for="col in props.cols"
                 :key="col.name"
@@ -24,13 +28,15 @@
               >
                 {{ col.label }}
               </q-th>
+              <q-th auto-width/>
             </q-tr>
           </template>
 
           <template v-slot:body="props">
             <q-tr :props="props">
               <q-td auto-width>
-                <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'expand_less' : 'expand_more'" />
+                <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand"
+                       :icon="props.expand ? 'expand_less' : 'expand_more'"/>
               </q-td>
               <q-td
                 v-for="col in props.cols"
@@ -38,6 +44,12 @@
                 :props="props"
               >
                 {{ col.value }}
+              </q-td>
+              <q-td auto-width>
+                <div class="q-gutter-xs">
+                  <q-btn size="sm" color="info" round dense @click="updateNote(props.row.id)" icon="edit"/>
+                  <q-btn size="sm" color="negative" round dense @click="deleteNote(props.row.id)" icon="delete"/>
+                </div>
               </q-td>
             </q-tr>
             <q-tr v-show="props.expand" :props="props">
@@ -62,11 +74,17 @@
 </template>
 
 <script setup>
-import { getAssetsListForCombo, getNegotiationNotes } from 'src/services-http/requests'
+import {
+  deleteNoteAndOperations,
+  getAssetsListForCombo,
+  getNegotiationNotes
+} from 'src/services-http/requests'
 import { ref, onMounted } from 'vue'
 import NegotiationNoteForm from 'components/NegotiationNoteForm.vue'
 import { currencyFormat, dateFormat } from 'src/util'
+import { useQuasar } from 'quasar'
 
+const $q = useQuasar()
 const columns = [
   {
     name: 'data_pregao',
@@ -186,8 +204,11 @@ const tableRef = ref()
 const rows = ref([])
 const assets = ref([])
 const loading = ref(false)
+const enableEdit = ref(false)
+const noteId = ref(null)
 
 function onRequest () {
+  cancelEdit()
   getNegotiationNotes()
     .then(({ data }) => {
       rows.value = data
@@ -199,7 +220,6 @@ onMounted(() => {
   onRequest()
   getAssetsListForCombo().then(function (response) {
     assets.value = response.data.map(function (elem) {
-      // console.log(elem)
       const elem2 = {}
       elem2.label = elem.code
       elem2.value = elem.code
@@ -208,6 +228,30 @@ onMounted(() => {
     })
   })
 })
+const updateNote = (id) => {
+  enableEdit.value = true
+  noteId.value = id
+}
+const cancelEdit = () => {
+  enableEdit.value = false
+  noteId.value = null
+}
+const deleteNote = (id) => {
+  $q.dialog({
+    title: 'Confirmação',
+    message: 'Deseja deletar essa nota de corretagem e suas operações?',
+    cancel: true,
+    persistent: true
+  }).onOk(() => {
+    deleteNoteAndOperations(id).then(() => {
+      $q.notify({
+        type: 'positive',
+        message: 'Nota e operações deletadas com sucesso!'
+      })
+      onRequest()
+    })
+  })
+}
 </script>
 
 <style>

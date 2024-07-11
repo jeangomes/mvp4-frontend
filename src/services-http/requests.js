@@ -5,77 +5,7 @@ export const myRequest = (codeFilter) => {
   if (codeFilter !== '') {
     url = '/operations?code=' + codeFilter
   }
-  console.log(url)
   return api.get(url)
-}
-
-export const myRequestOneRecord = (id) => {
-  return fetch('http://localhost:5000/operation?operation_id=' + id)
-    .then(data => {
-      return data.json()
-    })
-    .then(myData => {
-      // console.log(myData)
-      return myData
-    })
-    .catch(function (error) {
-      console.log(error.message)
-    })
-}
-
-export const postMyData = (myState) => {
-  const formData = new FormData()
-  for (const key in myState) {
-    formData.append(key, myState[key])
-  }
-  const options = {
-    method: 'POST',
-    body: formData
-  }
-  return fetch('http://localhost:5000/operation', options)
-    .then(data => {
-      return data.json()
-    })
-    .then(update => {
-      // console.log(update);
-      return true
-    })
-    .catch(e => {
-      console.log(e)
-    })
-}
-
-export const updateMyData = (myState) => {
-  const options = {
-    method: 'PUT',
-    body: JSON.stringify(myState),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }
-  return fetch('http://localhost:5000/operation/' + myState.id, options)
-    .then(data => {
-      return data.json()
-    })
-    .then(update => {
-      return true
-    })
-    .catch(e => {
-      console.log(e)
-    })
-}
-
-export const deleteRecord = (id) => {
-  return fetch('http://localhost:5000/operation?operation_id=' + id, { method: 'DELETE' })
-    .then(data => {
-      return data.json()
-    })
-    .then(myData => {
-      console.log(myData)
-    })
-    .catch(function (error) {
-      console.log(error.message)
-    })
 }
 
 export const getFinancialAssets = (pagination) => {
@@ -94,6 +24,10 @@ export const postNewNegotiationNote = (payload) => {
   return api.post('/negotiation-notes', payload)
 }
 
+export const updateNegotiationNote = (id, payload) => {
+  return api.put('/negotiation-notes/' + id, payload)
+}
+
 export const getNegotiationNotes = () => {
   return api.get('/negotiation-notes')
 }
@@ -104,4 +38,12 @@ export const getAssetsListForCombo = () => {
 
 export const getCurrentPosition = () => {
   return api.get('/current-position')
+}
+
+export const deleteNoteAndOperations = (noteId) => {
+  return api.delete('/negotiation-notes/' + noteId)
+}
+
+export const getNoteAndOperations = (noteId) => {
+  return api.get('/negotiation-notes/' + noteId)
 }

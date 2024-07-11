@@ -1,16 +1,16 @@
 <script setup>
-import { ref, provide } from 'vue'
+import { ref, provide, watch } from 'vue'
 import { useQuasar } from 'quasar'
-import { postNewNegotiationNote } from 'src/services-http/requests'
+import { getNoteAndOperations, postNewNegotiationNote, updateNegotiationNote } from 'src/services-http/requests'
 // import QCurrencyInput from 'components/QCurrencyInput.vue'
 import LcrCurrencyInput from 'components/LcrCurrencyInput.vue'
 import { currencyFormat } from 'src/util'
 import StockForm from 'components/StockForm.vue'
 import MyInputDate from 'components/MyInputDate.vue'
 
-defineProps(['assets'])
+const props = defineProps(['assets', 'editEnable', 'noteId'])
 const $q = useQuasar()
-const emit = defineEmits(['reloadData'])
+const emit = defineEmits(['reloadData', 'cancelEdit'])
 const myForm = ref(null)
 const initialFormState = {
   data_pregao: '',
@@ -46,7 +46,7 @@ const addOperation = () => {
 
 const submitForm = async () => {
   try {
-    const response = await postNewNegotiationNote(form.value)
+    const response = !props.editEnable ? await postNewNegotiationNote(form.value) : await updateNegotiationNote(props.noteId, form.value)
     console.log(response)
     emit('reloadData')
     $q.notify({
@@ -75,6 +75,25 @@ const resetForm = () => {
   ]
 }
 
+const getDataForEdit = () => {
+  if (props.editEnable) {
+    getNoteAndOperations(props.noteId).then((response) => {
+      Object.assign(form.value, response.data)
+    })
+  }
+}
+watch(
+  () => props.noteId,
+  () => {
+    if (props.noteId) {
+      getDataForEdit()
+    }
+  }
+)
+const cancelEdit = () => {
+  myForm.value.reset()
+  emit('cancelEdit')
+}
 provide('form', {
   form
 })
@@ -128,13 +147,11 @@ provide('form', {
             <q-btn @click="addOperation" color="primary" icon="add_circle"/>
           </span>
         </div>
-<!--        <div class="q-mb-sm text-right col">
-          <q-btn @click="addOperation" label="Add nova operação" color="primary" no-caps/>
-        </div>-->
       </div>
       <stock-form class="q-mt-sm" :assets="assets" />
-      <div class="text-center">
-        <q-btn type="submit" label="Salvar" color="primary" class="q-mt-md"/>
+      <div class="text-center q-gutter-xs">
+        <q-btn type="submit" label="Salvar" color="primary" no-caps class="q-mt-md"/>
+        <q-btn v-if="editEnable" label="Cancelar edição" @click="cancelEdit" color="primary" no-caps class="q-mt-md"/>
       </div>
     </q-form>
   </q-card>

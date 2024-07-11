@@ -58,7 +58,7 @@ defineOptions({
 
 const linksList = [
   {
-    title: 'Listagem de Operações',
+    title: 'Posição e Operações',
     caption: 'Ações, FIIs...',
     icon: 'list',
     link: { name: 'home' }

@@ -1,8 +1,10 @@
 <script setup>
 import { ref, inject, onMounted } from 'vue'
+
 const props = defineProps(['assets'])
 const { form } = inject('form')
 const options = ref([])
+
 function filterManufacturer (val, update) {
   if (val === '') {
     update(() => {
@@ -15,6 +17,7 @@ function filterManufacturer (val, update) {
     options.value = props.assets.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
   })
 }
+
 onMounted(() => {
   options.value = props.assets
 })
@@ -25,15 +28,20 @@ const makeVal = (operation) => {
   operation.code = codeValue
   operation.asset_type = assetType
 }
+
+function removeOperation (index) {
+  form.value.operations.splice(index, 1)
+}
 </script>
 
 <template>
   <q-card class="my-form" bordered>
     <q-card-section>
-      <pre v-if="false">{{form.operations}}</pre>
+      <pre v-if="false">{{ form.operations }}</pre>
       <div class="row q-col-gutter-xs" v-for="(operation, index) in form.operations" :key="index">
         <div class="col-xs-12 col-sm-6 col-md-2">
-          <q-select v-model="operation.operation_type" :options="['Compra', 'Venda']" label="Operação" :rules="[ val => val && val.length > 0 || 'Campo requerido']" outlined stack-label />
+          <q-select v-model="operation.operation_type" :options="['Compra', 'Venda']" label="Operação"
+                    :rules="[ val => val && val.length > 0 || 'Campo requerido']" outlined stack-label/>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-3">
           <q-input
@@ -46,7 +54,7 @@ const makeVal = (operation) => {
           />
           <q-select outlined stack-label v-model="operation.code"
                     use-input input-debounce="0" @filter="filterManufacturer" @update:model-value="makeVal(operation)"
-                    :rules="[val => !!val || 'Informação obrigatória']" :options="options" label="Código *" />
+                    :rules="[val => !!val || 'Informação obrigatória']" :options="options" label="Código *"/>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-2">
           <q-input
@@ -62,10 +70,15 @@ const makeVal = (operation) => {
           />
         </div>
         <div class="col-xs-12 col-sm-6 col-md-2">
-          <q-input type="number" v-model="operation.price" label="Cotação" step="0.01" stack-label outlined :rules="[ val => val && val.length > 0 || 'Campo requerido']"/>
+          <q-input type="number" v-model="operation.price" label="Cotação" step="0.01" stack-label outlined lazy-rules
+                   :rules="[
+          val => val !== null && val !== '' || 'Campo requerido',
+          val => val > 0 && val < 1000 || 'Informe uma quantidade real'
+        ]"/>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-2">
-          <q-btn icon="remove_circle" class="q-mt-sm q-ml-md" color="warning" rounded outline/>
+          <q-btn icon="remove_circle" class="q-mt-sm q-ml-md" color="warning" @click="removeOperation(index)" rounded
+                 outline/>
         </div>
       </div>
     </q-card-section>
