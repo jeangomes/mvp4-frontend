@@ -29,15 +29,17 @@ onMounted(() => {
   </Transition>
   <q-card id="search_area">
     <q-card-section>
-      <q-input outlined stack-label v-model="codeSearch" label="Filtrar por código" style="max-width: 200px;">
-        <template v-slot:append>
-          <q-icon v-if="codeSearch !== ''" name="close" @click="codeSearch = ''" class="cursor-pointer" />
-        </template>
+      <q-form @submit="callRequest()">
+        <q-input outlined stack-label v-model="codeSearch" label="Filtrar por código" style="max-width: 200px;">
+          <template v-slot:append>
+            <q-icon v-if="codeSearch !== ''" name="close" @click="codeSearch = ''" class="cursor-pointer" />
+          </template>
 
-        <template v-slot:after>
-          <q-btn round dense icon="search" @click="callRequest()" />
-        </template>
-      </q-input>
+          <template v-slot:after>
+            <q-btn round dense icon="search" @click="callRequest()" />
+          </template>
+        </q-input>
+      </q-form>
 
       <p style="color: #453731; margin-top: 15px;">Registros encontrados: {{operations.length}}</p>
     </q-card-section>
